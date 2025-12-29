@@ -21,7 +21,7 @@ router.get('/', (req, res) => {
     activeId: null,
     meta: pageMeta({
       title: 'Ingia kwa Google | Football Tips Kenya',
-      description: 'Ingia haraka kwa Google ili kupata access ya VIP tips na betting dashboard yako.',
+      description: 'Ingia kwa Google ili kupata access ya VIP tips na betting dashboard yako.',
       path: '/auth/',
     }),
   });
