@@ -1,0 +1,114 @@
+import './config/env.js';
+import http from 'http';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import express from 'express';
+import compression from 'compression';
+import helmet from 'helmet';
+import expressLayouts from 'express-ejs-layouts';
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
+import flash from 'connect-flash';
+import cors from 'cors';
+import pageRoutes from './routes/pages.js';
+import authRoutes from './routes/auth.js';
+
+//Only use one payment route file at a time to avoid conflicts
+
+import seoRoutes from './routes/index.js';
+import { connectDB } from './config/db.js';
+import { SITE, NAV_ITEMS } from './config/site.js';
+import { pageMeta } from './utils/meta.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+
+// Database
+connectDB().catch((err) => {
+  console.error('Mongo connection error:', err.message);
+});
+
+// View engine
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
+app.use(expressLayouts);
+app.set('layout', 'layouts/main');
+
+// Security + perf
+app.use(cors());
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+  })
+);
+app.use(compression());
+
+// Parsers
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+
+// Sessions (7 days)
+const sessionStore = MongoStore.create({
+  mongoUrl: process.env.MONGO_URI,
+  collectionName: 'kenya-sessions',
+  ttl: 60 * 60 * 24 * 7,
+});
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || 'mikeka-session-secret',
+    resave: false,
+    saveUninitialized: false,
+    store: sessionStore,
+    rolling: true,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+      sameSite: 'lax',
+    },
+  })
+);
+
+app.use(flash());
+
+// Static assets
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Global locals
+app.use((req, res, next) => {
+  res.locals.site = SITE;
+  res.locals.navItems = NAV_ITEMS;
+  res.locals.currentPath = req.path;
+  res.locals.user = req.session?.user || null;
+  const hasFlash = req.session && req.session.flash;
+  res.locals.flash = hasFlash && typeof req.flash === 'function' ? req.flash() : {};
+  next();
+});
+
+// Routes
+app.use('/', pageRoutes);
+app.use('/auth', authRoutes);
+app.use('/', seoRoutes);
+
+// 404 handler
+app.use((req, res) => {
+  if (!res.headersSent && req.accepts('html')) {
+    const meta = pageMeta({
+      title: 'Ukurasa haujapatikana',
+      description: 'Samahani, ukurasa unaotafuta haupo.',
+      path: req.originalUrl || '/',
+    });
+    return res.status(404).render('pages/404', { activeId: null, meta });
+  }
+
+  return res.status(404).json({ message: 'Not found' });
+});
+
+const port = process.env.PORT || 3000;
+const server = http.createServer(app);
+
+server.listen(port, () => {
+  console.log(`SSR server running at http://localhost:${port}`);
+});

@@ -1,0 +1,36 @@
+{
+  "name": "mkeka-uhakika-ssr",
+  "description": "Server-side rendered Express + EJS site for Football Tips Kenya football betting tips.",
+  "type": "module",
+  "version": "4.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "lint": "echo \"No linter configured\""
+  },
+  "dependencies": {
+    "axios": "^1.13.2",
+    "compression": "^1.7.5",
+    "connect-flash": "^0.1.1",
+    "connect-mongo": "^6.0.0",
+    "cors": "^2.8.5",
+    "dayjs": "^1.11.9",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "express-ejs-layouts": "^2.5.1",
+    "express-session": "^1.18.2",
+    "form-data": "^4.0.5",
+    "google-auth-library": "^10.5.0",
+    "gray-matter": "^4.0.3",
+    "helmet": "^7.1.0",
+    "marked": "^9.1.5",
+    "mongoose": "^8.8.0",
+    "recachegoose": "^11.0.3",
+    "resend": "^6.5.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}
