@@ -65,6 +65,57 @@
     </div>
   </section>
 
+  <section class="section-card my-3">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title h4 mb-1">FKF Premier League Standings</h2>
+        <p class="section-subtitle mb-0">Table ya Kenya EPL (Ligi Kuu ya Kenya) <%= season %></p>
+      </div>
+      <a href="/kenya/premier-league/" class="btn btn-outline-success btn-sm">Full Table & Fixtures</a>
+    </div>
+    <% if (kenyaStandings?.length) { %>
+      <div class="standings-wrapper mt-3">
+        <table class="standings-table">
+          <thead>
+            <tr>
+              <th class="text-center">#</th>
+              <th>Timu</th>
+              <th class="text-center">P</th>
+              <th class="text-center hide-mobile">W</th>
+              <th class="text-center hide-mobile">D</th>
+              <th class="text-center hide-mobile">L</th>
+              <th class="text-center">GD</th>
+              <th class="text-center">Pts</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% kenyaStandings.forEach((team) => { %>
+              <tr>
+                <td class="text-center rank"><%= team.rank %></td>
+                <td>
+                  <div class="team-cell">
+                    <% if (team.team?.logo) { %>
+                      <img class="team-logo" src="<%= team.team.logo %>" alt="<%= team.team?.name || 'Team logo' %>" loading="lazy" />
+                    <% } %>
+                    <span class="team-name"><%= team.team?.name || 'Timu' %></span>
+                  </div>
+                </td>
+                <td class="text-center"><%= team.all?.played ?? '-' %></td>
+                <td class="text-center hide-mobile"><%= team.all?.win ?? '-' %></td>
+                <td class="text-center hide-mobile"><%= team.all?.draw ?? '-' %></td>
+                <td class="text-center hide-mobile"><%= team.all?.lose ?? '-' %></td>
+                <td class="text-center"><%= team.goalsDiff ?? '-' %></td>
+                <td class="text-center points"><%= team.points ?? '-' %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-muted mt-2 mb-0">Unaona top 10 hapa, full standings ziko kwa page ya Kenya Premier League.</p>
+    <% } else { %>
+      <div class="tip-row empty">Standings hazijapatikana kwa sasa. Refresh baadaye.</div>
+    <% } %>
+  </section>
 
   <section class="section-card my-5">
     <h2 class="section-title h4 mb-1">Karibu Football Tips Kenya – Home ya Betting Tips za Kenya</h2>

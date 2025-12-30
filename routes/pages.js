@@ -3,11 +3,16 @@ import { pageMeta } from '../utils/meta.js';
 import { enforceVipAccess } from '../utils/vipAccess.js';
 import { getMegaTips, getOver15Tips, getBttsTips, getHt15Tips, getVipTips } from '../utils/get-tips/index.js';
 import { sendNormalSMS } from '../utils/sendSMS.js';
+import LeagueModel from '../models/league.js';
 
 const router = Router();
 
 router.get('/', async (req, res) => {
-  const tips = await getMegaTips();
+  const [tips, league] = await Promise.all([
+    getMegaTips(),
+    LeagueModel.findOne({ league_id: 276 }).lean().cache(600),
+  ]);
+  const standings = Array.isArray(league?.standing) ? league.standing : [];
   res.render('pages/home', {
     activeId: 'home',
     meta: pageMeta({
@@ -18,6 +23,8 @@ router.get('/', async (req, res) => {
       image: '/images/social.png',
     }),
     tips,
+    season: league?.msimu?.long || null,
+    kenyaStandings: standings.slice(0, 10),
   });
 });
 
@@ -89,6 +96,25 @@ router.get('/about', (req, res) => {
   res.render('pages/about', {
     activeId: 'about',
     meta: pageMeta({ title: 'Kuhusu Sisi | Football Tips Kenya', path: '/about' }),
+  });
+});
+
+router.get('/kenya/premier-league', async (req, res) => {
+  const league = await LeagueModel.findOne({ league_id: 276 }).lean().cache(600);
+  const standings = Array.isArray(league?.standing) ? league.standing : [];
+  const fixtures = Array.isArray(league?.current_round_fixtures) ? league.current_round_fixtures : [];
+  res.render('pages/kenya-premier-league', {
+    activeId: 'kenya-premier-league',
+    meta: pageMeta({
+      title: 'FKF Premier League Table & Fixtures | Kenya',
+      description:
+        'Angalia FKF Premier League standings, fixtures za round ya sasa na info ya ligi. Hii ni page ya Kenya Premier League kwa betting na analysis.',
+      path: '/kenya/premier-league/',
+      image: '/images/social.png',
+    }),
+    kenyaLeague: league || null,
+    kenyaStandings: standings,
+    kenyaFixtures: fixtures,
   });
 });
 

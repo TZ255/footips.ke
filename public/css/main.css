@@ -240,6 +240,55 @@ body.sidebar-open .sidebar {
   background: #ffffff;
 }
 
+.standings-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.standings-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 520px;
+  background: #ffffff;
+}
+
+.standings-table th,
+.standings-table td {
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.95rem;
+}
+
+.standings-table th {
+  background: #f1f5f9;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.standings-table .team-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.standings-table .team-logo {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  object-fit: contain;
+  background: #ffffff;
+}
+
+.standings-table .rank {
+  font-weight: 700;
+}
+
+.standings-table .points {
+  font-weight: 800;
+  color: var(--accent-strong);
+}
+
 .tip-head {
   display: grid;
   grid-template-columns: 140px 1fr 140px;
@@ -348,6 +397,25 @@ body.sidebar-open .sidebar {
     flex-wrap: wrap;
     gap: 6px;
     width: 100%;
+  }
+
+  .standings-table {
+    min-width: 360px;
+  }
+
+  .standings-table th,
+  .standings-table td {
+    padding: 8px 6px;
+    font-size: 0.9rem;
+  }
+
+  .standings-table .team-logo {
+    width: 18px;
+    height: 18px;
+  }
+
+  .hide-mobile {
+    display: none;
   }
 
   .day-toggle .nav-item {

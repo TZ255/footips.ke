@@ -1,0 +1,139 @@
+<%
+  const formatDate = (dateStr, options) => {
+    if (!dateStr) return 'TBD';
+    const date = new Date(dateStr);
+    if (Number.isNaN(date.getTime())) return 'TBD';
+    return new Intl.DateTimeFormat('en-KE', options || {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+      timeZone: 'Africa/Nairobi',
+    }).format(date);
+  };
+
+  const leagueName = kenyaLeague?.league_name || kenyaLeague?.league?.name || 'FKF Premier League';
+  const leagueSeason = kenyaLeague?.msimu?.long || kenyaLeague?.league_season || '2025/26';
+  const roundLabel = kenyaFixtures?.[0]?.league?.round || 'Round ya sasa';
+  const lastUpdate = kenyaStandings?.[0]?.update;
+%>
+
+<div class="section-stack">
+  <section class="section-card">
+    <div class="section-header">
+      <div>
+        <p class="section-subtitle text-uppercase small mb-1">Kenya Premier League</p>
+        <h1 class="section-title display-6 fw-bold mb-2"><%= leagueName %> Table & Fixtures <%= leagueSeason %></h1>
+      </div>
+    </div>
+    <p class="lead">
+      Hii ndio page ya <strong>FKF Premier League</strong> kwa wasee wa Kenya. Pata standings, fixtures za round ya sasa,
+      na info muhimu ya ligi inakusaidia ku-analyze mechi before kubet.
+    </p>
+    <div class="d-flex flex-wrap gap-2">
+      <span class="league-chip"><i class="fa-solid fa-flag"></i> Kenya</span>
+      <span class="league-chip"><i class="fa-solid fa-calendar"></i> Season <%= leagueSeason %></span>
+      <span class="league-chip"><i class="fa-solid fa-layer-group"></i> <%= roundLabel %></span>
+    </div>
+  </section>
+
+  <section class="section-card my-3">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title h4 mb-1">Standings za FKF PL</h2>
+        <p class="section-subtitle mb-0">Hii ndio ligi table ya sasa kwa timu zote</p>
+      </div>
+    </div>
+    <% if (kenyaStandings?.length) { %>
+      <div class="standings-wrapper mt-3">
+        <table class="standings-table">
+          <thead>
+            <tr>
+              <th class="text-center">#</th>
+              <th>Timu</th>
+              <th class="text-center">P</th>
+              <th class="text-center hide-mobile">W</th>
+              <th class="text-center hide-mobile">D</th>
+              <th class="text-center hide-mobile">L</th>
+              <th class="text-center">GD</th>
+              <th class="text-center">Pts</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% kenyaStandings.forEach((team) => { %>
+              <tr>
+                <td class="text-center rank"><%= team.rank %></td>
+                <td>
+                  <div class="team-cell">
+                    <% if (team.team?.logo) { %>
+                      <img class="team-logo" src="<%= team.team.logo %>" alt="<%= team.team?.name || 'Team logo' %>" loading="lazy" />
+                    <% } %>
+                    <span class="team-name"><%= team.team?.name || 'Timu' %></span>
+                  </div>
+                </td>
+                <td class="text-center"><%= team.all?.played ?? '-' %></td>
+                <td class="text-center hide-mobile"><%= team.all?.win ?? '-' %></td>
+                <td class="text-center hide-mobile"><%= team.all?.draw ?? '-' %></td>
+                <td class="text-center hide-mobile"><%= team.all?.lose ?? '-' %></td>
+                <td class="text-center"><%= team.goalsDiff ?? '-' %></td>
+                <td class="text-center points"><%= team.points ?? '-' %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+      <% if (lastUpdate) { %>
+        <p class="text-muted mt-2 mb-0">Last update: <%= formatDate(lastUpdate, { dateStyle: 'medium', timeZone: 'Africa/Nairobi' }) %></p>
+      <% } %>
+    <% } else { %>
+      <div class="tip-row empty">Hakuna standings available kwa sasa. Rudi baadaye.</div>
+    <% } %>
+  </section>
+
+  <section class="section-card my-3">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title h4 mb-1">Fixtures za Round ya Sasa</h2>
+        <p class="section-subtitle mb-0">Mechi zinazokuja kwa FKF PL</p>
+      </div>
+    </div>
+    <div class="tip-table shadow-sm">
+      <div class="tip-head d-none d-md-grid">
+        <div>Tarehe / Saa</div>
+        <div>Mechi</div>
+        <div class="text-center">Uwanja / Status</div>
+      </div>
+      <% if (kenyaFixtures?.length) { %>
+        <% kenyaFixtures.forEach((fixture) => { %>
+          <div class="tip-row">
+            <div class="tip-cell time">
+              <div class="fw-semibold"><%= formatDate(fixture.fixture?.date) %></div>
+              <div class="tip-note"><%= fixture.league?.round || 'Round' %></div>
+            </div>
+            <div class="tip-cell match">
+              <div class="fw-bold"><%= fixture.teams?.home?.name || 'Home' %> vs <%= fixture.teams?.away?.name || 'Away' %></div>
+              <div class="tip-note"><%= fixture.league?.name || leagueName %></div>
+            </div>
+            <div class="tip-cell pick text-md-center">
+              <div class="fw-semibold"><%= fixture.fixture?.venue?.name || 'Uwanja TBD' %></div>
+              <div class="tip-note"><%= fixture.fixture?.status?.long || 'Status TBD' %></div>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <div class="tip-row empty">Fixtures hazijapangwa. Check tena baadaye.</div>
+      <% } %>
+    </div>
+  </section>
+
+  <section class="section-card my-3">
+    <h2 class="section-title h4 mb-1">Kwa Nini Hii Table ni Important?</h2>
+    <p>
+      Standings zinakuonyesha form ya kila timu, goal difference na points. Hii inakusaidia kupima kama team iko kwenye
+      title race, survival mode ama mid-table bila pressure. Ukifanya analysis, tumia table pamoja na fixtures ili
+      ujue ni wapi value iko kwa bet zako.
+    </p>
+    <p class="mb-0">
+      Kama unatafuta tips za leo au acca, rudi <a href="/" class="text-decoration-none">home</a> au angalia markets
+      tofauti (BTTS, Over 1.5, HT goals). Tuko hapa kukusaidia ubeti smart.
+    </p>
+  </section>
+</div>

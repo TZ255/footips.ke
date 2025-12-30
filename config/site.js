@@ -15,6 +15,11 @@ export const NAV_ITEMS = [
   { id: 'over15', label: 'Over 1.5 Tips', href: '/over-15/' },
   { id: 'btts', label: 'BTTS (GG/NG)', href: '/both-teams-to-score/' },
   {
+    id: 'kenya-premier-league',
+    label: 'Kenya Premier League',
+    href: '/kenya/premier-league/',
+  },
+  {
     id: 'ht15',
     label: 'Under/Over 1.5 HT',
     href: '/under-over-15-first-half/',
@@ -28,6 +33,7 @@ export const STATIC_PAGES = [
   '/over-15/',
   '/both-teams-to-score/',
   '/under-over-15-first-half/',
+  '/kenya/premier-league/',
   '/about/',
   '/services/',
   '/projects/',
